@@ -20,6 +20,15 @@
     <% } else { %>
         <h3>NENHUM ERRO</h3>
     <% } %> 
+
+    <hr>
+
+    <h3>Produtos</h3>
+    <% produtos.forEach(function(produto) { %>
+        <hr>
+        <p>Produto: <%= produto.nome %></p>
+        <p>Preço: <%= produto.preco %></p> <br> 
+    <% }) %>  
     
 </body>
 </html>
