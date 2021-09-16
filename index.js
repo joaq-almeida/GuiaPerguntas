@@ -7,11 +7,13 @@ app.set('view engine', 'ejs')
 app.get("/:nome/:lang", (req, res) => {
     let nome = req.params.nome
     let lang = req.params.lang
+    let exibirMsg = false
     res.render("index", {
         nome: nome,
         lang: lang,
         empresa: "Company ltda",
-        inscritos: 8000
+        inscritos: 8000,
+        msg: exibirMsg
     })
 })
 
