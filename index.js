@@ -2,7 +2,8 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const connection = require("./database/database");
-const perguntaModel = require("./database/Pergunta");
+const Pergunta = require("./database/Pergunta");
+
 //database
 connection.authenticate().then(() => {
     console.log("conexão realizada com sucesso");
@@ -20,7 +21,11 @@ app.use(bodyParser.json());
 
 //routes
 app.get("/", (req, res) => {
-    res.render("index");
+    Pergunta.findAll({ raw: true, order: [["id", "DESC"]]})
+        .then((perguntas) => {
+            console.log(perguntas);
+            res.render("index", { perguntas: perguntas })
+        });
 });
 
 app.get("/perguntar", (req, res) => {
@@ -30,7 +35,26 @@ app.get("/perguntar", (req, res) => {
 app.post("/salvarpergunta", (req, res) => {
     let titulo = req.body.titulo;
     let descricao = req.body.descricao;
-    res.send("formulário recebido! \nTitulo: " + titulo + " Descricao: " + descricao);
+    Pergunta.create({
+        titulo: titulo,
+        descricao: descricao
+    }).then(() => {
+        res.redirect("/");
+    }).catch((erro) => {
+        res.send("Erro ao salvar item " + erro);
+    });
+});
+
+app.get("/pergunta/:id", (req, res) => {
+    let id = req.params.id;
+    Pergunta.findOne({
+        where: {id: id}
+    }).then((pergunta) => {
+        if(pergunta != undefined)
+            res.render("pergunta", {pergunta: pergunta});
+        else
+            res.redirect("/");
+    });
 });
 
 app.listen(3443, () => {
