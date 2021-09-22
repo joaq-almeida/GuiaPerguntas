@@ -1,6 +1,15 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const connection = require("./database/database");
+const perguntaModel = require("./database/Pergunta");
+//database
+connection.authenticate().then(() => {
+    console.log("conexão realizada com sucesso");
+}).catch((erro) => {
+    console.log("Erro ao conectar: " + erro)
+});
+
 
 //configurando template engine
 app.set('view engine', 'ejs');
