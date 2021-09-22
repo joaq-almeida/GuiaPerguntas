@@ -12,7 +12,6 @@ connection.authenticate().then(() => {
     console.log("Erro ao conectar: " + erro)
 });
 
-
 //configurando template engine
 app.set('view engine', 'ejs');
 app.use(express.static("public"));
@@ -55,6 +54,17 @@ app.get("/pergunta/:id", (req, res) => {
             res.render("pergunta", {pergunta: pergunta});
         else
             res.redirect("/");
+    });
+});
+
+app.post("/responder", (req, res) => {
+    let corpo = req.body.corpo;
+    let perguntaId = req.body.perguntaId;
+    Resposta.create({
+        corpo: corpo,
+        perguntaId: perguntaId
+    }).then(() => {
+        res.redirect("/pergunta/"+perguntaId);
     });
 });
 
