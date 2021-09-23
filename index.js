@@ -21,6 +21,7 @@ app.use(bodyParser.json());
 
 //routes
 app.get("/", (req, res) => {
+
     Pergunta.findAll({ raw: true, order: [["id", "DESC"]]})
         .then((perguntas) => {
             console.log(perguntas);
@@ -33,8 +34,10 @@ app.get("/perguntar", (req, res) => {
 });
 
 app.post("/salvarpergunta", (req, res) => {
+
     let titulo = req.body.titulo;
     let descricao = req.body.descricao;
+
     Pergunta.create({
         titulo: titulo,
         descricao: descricao
@@ -46,25 +49,37 @@ app.post("/salvarpergunta", (req, res) => {
 });
 
 app.get("/pergunta/:id", (req, res) => {
+
     let id = req.params.id;
     Pergunta.findOne({
         where: {id: id}
     }).then((pergunta) => {
-        if(pergunta != undefined)
-            res.render("pergunta", {pergunta: pergunta});
-        else
+
+        if(pergunta != undefined){
+
+            Resposta.findAll({
+                where: { perguntaId: pergunta.id },
+                order: [["id", "DESC"]]
+            }).then(respostas => {
+                res.render("pergunta", { pergunta: pergunta, respostas: respostas });
+            });
+
+        } else {
             res.redirect("/");
+        }
     });
 });
 
 app.post("/responder", (req, res) => {
+
     let corpo = req.body.corpo;
     let perguntaId = req.body.perguntaId;
+
     Resposta.create({
         corpo: corpo,
         perguntaId: perguntaId
     }).then(() => {
-        res.redirect("/pergunta/"+perguntaId);
+        res.redirect("/pergunta/" + perguntaId);
     });
 });
 
